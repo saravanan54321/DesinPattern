@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Provider - Post Food</title>
+</head>
+<body>
+<h2>Post Food</h2>
+<label>Food name: <input id="foodName"></label><br>
+<label>Quantity: <input id="quantity"></label><br>
+<button id="btnPost">Post Food with My Location</button>
+
+<script>
+    document.getElementById('btnPost').addEventListener('click', function() {
+      if (!navigator.geolocation) return alert('Geolocation not supported');
+
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const data = {
+          foodName: document.getElementById('foodName').value,
+          quantity: document.getElementById('quantity').value,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+
+        fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        }).then(r => r.json()).then(j => alert('Posted! ID = ' + j.id))
+          .catch(e => alert('Error: ' + e));
+      }, function(err) {
+        alert('Error getting location: ' + err.message);
+      });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Consumer - Find Food</title>
+    <style>table, td, th {border:1px solid #ccc; border-collapse:collapse; padding:6px;}</style>
+</head>
+<body>
+<h2>Available Food</h2>
+<button id="btnLocate">Get My Location & Show Posts</button>
+<div id="status"></div>
+<div id="list"></div>
+
+<script>
+    let myLat, myLon;
+    document.getElementById('btnLocate').addEventListener('click', function() {
+      if (!navigator.geolocation) return alert('Geolocation not supported');
+      navigator.geolocation.getCurrentPosition(function(position) {
+        myLat = position.coords.latitude;
+        myLon = position.coords.longitude;
+        document.getElementById('status').innerText =
+          'Your location: ' + myLat + ', ' + myLon;
+        loadPosts();
+      }, function(err) { alert('Error getting location: ' + err.message); });
+    });
+
+    function loadPosts() {
+      fetch('/api/posts-with-distance?lat=' + myLat + '&lon=' + myLon)
+        .then(r => r.json())
+        .then(list => {
+          let html = '<table><tr><th>Food</th><th>Qty</th><th>Distance (km)</th><th>Actions</th></tr>';
+          list.forEach(item => {
+            const p = item.post;
+            const d = item.distanceKm.toFixed(2);
+            const mapsLink = 'https://www.google.com/maps/dir/?api=1&origin=' +
+              myLat + ',' + myLon + '&destination=' + p.latitude + ',' + p.longitude;
+            html += '<tr>' +
+              '<td>' + p.foodName + '</td>' +
+              '<td>' + p.quantity + '</td>' +
+              '<td>' + d + '</td>' +
+              '<td><a href="' + mapsLink + '" target="_blank">Google Maps</a></td>' +
+              '</tr>';
+          });
+          html += '</table>';
+          document.getElementById('list').innerHTML = html;
+        });
+    }
+</script>
+</body>
+</html>
