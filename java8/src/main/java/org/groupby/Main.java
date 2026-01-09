@@ -25,7 +25,7 @@ public class Main {
 
         List<String> names = Arrays.asList("ram", "raj", "ravi");
 
-        Map<Integer,List<String>> result = names.stream().collect(Collectors.groupingBy(String::length));
+        //Map<Integer,List<String>> result = names.stream().collect(Collectors.groupingBy(String::length));
 
 //        System.out.println(result);
 
@@ -35,13 +35,21 @@ public class Main {
         //and biconsumer
 
 
+     names.stream().collect(Collectors.groupingBy(String::length)).forEach((k,v)->{
+         System.out.println("Key " + k);
+         System.out.println("Value " + v );
 
 
-        result.forEach((k,v)->{
-                        System.out.println("KEY "+ k);
-                    System.out.println("Value "+ v);
-        }
-                );
+     });
+
+
+//        result.forEach((k,v)->{
+//                        System.out.println("KEY "+ k);
+//                    System.out.println("Value "+ v);
+//        }
+//                );
+
+//-----------------------------------------------------------------------------
 
 
 
